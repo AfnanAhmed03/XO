@@ -1,0 +1,586 @@
+/* --- Global Reset & Root Variables --- */
+:root {
+    --primary-color: #3498db; /* 'X' color */
+    --secondary-color: #e74c3c; /* 'O' color */
+    --accent-color: #2ecc71; /* Restart button */
+    
+    --bg-color: #2c3e50; /* Main dark background */
+    --text-color: #ecf0f1;
+    
+    /* Neumorphic shadow colors */
+    --light-shadow: rgba(255, 255, 255, 0.05);
+    --dark-shadow: rgba(0, 0, 0, 0.3);
+    
+    --border-radius-lg: 20px;
+    --border-radius-md: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+h1, h2 {
+    font-weight: 500;
+    text-shadow: 1px 1px 2px var(--dark-shadow);
+}
+h1 { font-size: 3rem; }
+h2 { font-size: 1.5rem; opacity: 0.8;}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- Neumorphic Button Base Style --- */
+/* This style applies to all our buttons */
+button {
+    padding: 15px 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    
+    /* The Neumorphic "Extruded" Shadow */
+    box-shadow: 6px 6px 12px var(--dark-shadow),
+                -6px -6px 12px var(--light-shadow);
+    
+    transition: all 0.1s ease-in-out;
+}
+
+button:hover {
+    /* "Lift" the button on hover */
+    transform: translateY(-2px);
+    box-shadow: 8px 8px 16px var(--dark-shadow),
+                -8px -8px 16px var(--light-shadow);
+    color: white; /* Brighten text on hover */
+}
+
+button:active {
+    /* The Neumorphic "Pressed" Effect */
+    transform: translateY(1px);
+    box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                inset -4px -4px 8px var(--light-shadow);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Start Screen --- */
+#start-screen {
+    padding: 30px 40px;
+    background-color: transparent;
+}
+#start-screen h1 { margin-bottom: 10px; }
+#start-screen h2 { margin-bottom: 30px; }
+
+.button-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+#pvpButton { --btn-color: var(--primary-color); }
+#pvcButton { --btn-color: var(--accent-color); }
+
+#pvpButton:hover, #pvcButton:hover {
+    color: var(--btn-color); /* Use the button's specific color */
+    box-shadow: 8px 8px 16px var(--dark-shadow),
+                -8px -8px 16px var(--light-shadow),
+                inset 0 0 0 1px var(--btn-color); /* Add a subtle inset border */
+}
+
+
+/* --- Game Container --- */
+#game-container {
+    position: relative;
+    padding: 20px 30px 30px 30px;
+    width: 90vw;
+    max-width: 500px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+#game-container h1 {
+    flex-grow: 1;
+}
+
+/* --- Upgraded Pause Icon --- */
+.pause-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    
+    /* Make the icon itself Neumorphic */
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    box-shadow: 4px 4px 8px var(--dark-shadow),
+                -4px -4px 8px var(--light-shadow);
+    
+    /* Center the two lines */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+.pause-icon:hover {
+    box-shadow: 6px 6px 12px var(--dark-shadow),
+                -6px -6px 12px var(--light-shadow);
+}
+.pause-icon:active {
+    box-shadow: inset 3px 3px 6px var(--dark-shadow),
+                inset -3px -3px 6px var(--light-shadow);
+}
+.pause-icon span {
+    display: block;
+    width: 4px; /* Width of each bar */
+    height: 18px; /* Height of each bar */
+    background-color: var(--text-color);
+    border-radius: 2px;
+}
+.pause-icon.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: inset 3px 3px 6px var(--dark-shadow),
+                inset -3px -3px 6px var(--light-shadow);
+}
+
+
+/* --- The "Killer" Gameboard --- */
+#gameboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Responsive columns */
+    grid-gap: 15px;
+    margin: 25px auto;
+}
+
+.cell {
+    width: 100%;
+    /* 1:1 Aspect Ratio */
+    padding-bottom: 100%; 
+    position: relative;
+    
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+
+    /* Extruded effect */
+    box-shadow: 8px 8px 16px var(--dark-shadow),
+                -8px -8px 16px var(--light-shadow);
+    
+    transition: all 0.1s ease-in-out;
+}
+
+.cell:hover {
+    /* Lift on hover */
+    transform: scale(1.02);
+    box-shadow: 12px 12px 24px var(--dark-shadow),
+                -12px -12px 24px var(--light-shadow);
+}
+
+/* When cell is clicked (.x or .o) */
+.cell.x, .cell.o {
+    /* Pressed effect */
+    box-shadow: inset 6px 6px 12px var(--dark-shadow),
+                inset -6px -6px 12px var(--light-shadow);
+    cursor: not-allowed;
+}
+.cell.x:hover, .cell.o:hover {
+    transform: none; /* No hover lift when played */
+    box-shadow: inset 6px 6px 12px var(--dark-shadow),
+                inset -6px -6px 12px var(--light-shadow);
+}
+
+/* --- Custom, Animated 'X' and 'O' --- */
+
+/* Hide the 'X' and 'O' text from JS */
+.cell {
+    font-size: 0;
+    color: transparent;
+}
+
+/* --- The 'O' --- */
+.cell.o::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0); /* Start scaled down */
+    
+    width: 50%;
+    height: 50%;
+    
+    border: 15px solid var(--secondary-color);
+    border-radius: 50%;
+    
+    animation: drawO 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* --- The 'X' --- */
+.cell.x::before,
+.cell.x::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    width: 15px; /* Bar thickness */
+    height: 70%; /* Bar length */
+    background-color: var(--primary-color);
+    border-radius: 8px;
+    
+    animation: drawX 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.cell.x::before {
+    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+}
+.cell.x::after {
+    transform: translate(-50%, -50%) rotate(-45deg) scale(0);
+}
+
+/* --- Keyframe Animations --- */
+@keyframes drawO {
+    from { transform: translate(-50%, -50%) scale(0); }
+    to { transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes drawX {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(0); }
+    to { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+}
+/* This makes the second X bar rotate the other way */
+.cell.x::after {
+    animation-name: drawX-after;
+}
+@keyframes drawX-after {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(0); }
+    to { transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+}
+
+
+/* --- Status Text & Restart --- */
+#statusText {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    min-height: 2.25rem; /* Reserve space */
+    margin-top: 15px;
+}
+
+#restartRound {
+    background-color: var(--accent-color);
+    color: #fff;
+    margin-top: 20px;
+}
+#restartButton:hover {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+
+/* --- Glassmorphism Pause Menu --- */
+#pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Frosted Glass Effect */
+    background-color: rgba(44, 62, 80, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.pause-menu {
+    /* The menu itself is also "soft" */
+    background: var(--bg-color);
+    padding: 40px 60px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 10px 10px 20px var(--dark-shadow),
+                -10px -10px 20px var(--light-shadow);
+}
+
+.pause-menu .pause-text {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+.pause-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#resumeButton {
+    background-color: var(--primary-color);
+    color: white;
+}
+#resumeButton:hover { background-color: #2980b9; }
+
+#menuBackButton {
+    background-color: var(--secondary-color);
+    color: white;
+}
+#menuBackButton:hover { background-color: #c0392b; }
+
+/* --- Add these styles to your style.css --- */
+
+/* --- Name Input Screen --- */
+#name-screen {
+    background-color: var(--bg-color);
+    padding: 30px 40px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 10px 10px 20px var(--dark-shadow),
+                -10px -10px 20px var(--light-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90vw;
+    max-width: 400px;
+}
+
+#name-screen h2 {
+    margin-bottom: 10px;
+}
+
+.name-input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.name-input-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.name-input-group input {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    padding: 12px 15px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    
+    /* Inset shadow for the input */
+    box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                inset -4px -4px 8px var(--light-shadow);
+}
+
+.name-input-group input:focus {
+    outline: none;
+    box-shadow: inset 6px 6px 10px var(--dark-shadow),
+                inset -6px -6px 10px var(--light-shadow);
+}
+
+#startGameButton {
+    margin-top: 10px;
+    background-color: var(--accent-color);
+    color: white;
+}
+#startGameButton:hover {
+    background-color: #27ae60;
+}
+
+/* --- Add this to style.css --- */
+
+/* --- Difficulty Selection Screen --- */
+#difficulty-screen {
+    background-color: var(--bg-color);
+    padding: 30px 40px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 10px 10px 20px var(--dark-shadow),
+                -10px -10px 20px var(--light-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90vw;
+    max-width: 400px;
+}
+
+#difficulty-screen h2 {
+    margin-bottom: 10px;
+}
+
+#easyButton { --btn-color: var(--primary-color); }
+#impossibleButton { --btn-color: var(--secondary-color); }
+
+#easyButton:hover, #impossibleButton:hover {
+    color: var(--btn-color);
+    box-shadow: 8px 8px 16px var(--dark-shadow),
+                -8px -8px 16px var(--light-shadow),
+                inset 0 0 0 1px var(--btn-color);
+}
+
+/* --- Scoreboard Styles --- */
+#scoreboard {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 10px auto;
+    
+    background-color: var(--bg-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: inset 6px 6px 12px var(--dark-shadow),
+                inset -6px -6px 12px var(--light-shadow);
+}
+
+.score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.score-card span:first-child { /* The name */
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+.score-card span:last-child { /* The score */
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Style for the current player's turn */
+.score-card.active {
+    border-radius: 10px;
+    box-shadow: 0 0 15px 5px var(--light-shadow);
+}
+.score-card.active span:first-child {
+    opacity: 1;
+}
+
+/* Color coding for X and O */
+#playerXScoreCard.active span:first-child { color: var(--primary-color); }
+#playerXScoreCard span:last-child { color: var(--primary-color); }
+
+#playerOScoreCard.active span:first-child { color: var(--secondary-color); }
+#playerOScoreCard span:last-child { color: var(--secondary-color); }
+
+
+.score-divider {
+    font-size: 2.5rem;
+    font-weight: 700;
+    opacity: 0.5;
+}
+
+/* --- Add this to the end of style.css --- */
+
+/* --- Winning Line Highlight (VERIFIED) --- */
+
+/* --- Winning Line Highlight (VERIFIED FIX) --- */
+.winning-cell {
+    animation: glow 1.2s ease-in-out infinite;
+}
+
+.cell.x.winning-cell {
+    --glow-color: var(--primary-color);
+}
+
+.cell.o.winning-cell {
+    --glow-color: var(--secondary-color);
+}
+
+/* The glow keyframe animation with the !important fix */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: inset 6px 6px 12px var(--dark-shadow),
+                    inset -6px -6px 12px var(--light-shadow),
+                    0 0 10px var(--glow-color) !important; /* <-- ADDED !important */
+    }
+    50% {
+        box-shadow: inset 6px 6px 12px var(--dark-shadow),
+                    inset -6px -6px 12px var(--light-shadow),
+                    0 0 30px 5px var(--glow-color) !important; /* <-- ADDED !important */
+    }
+}
+
+/* --- Add this to the end of style.css --- */
+
+/* --- Music Toggle Button --- */
+#music-toggle {
+    position: fixed; /* Stays in place */
+    top: 20px;
+    left: 20px;
+    width: 42px;
+    height: 42px;
+    z-index: 101; /* Must be higher than the pause overlay */
+
+    /* Neumorphic style */
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    box-shadow: 4px 4px 8px var(--dark-shadow),
+                -4px -4px 8px var(--light-shadow);
+    
+    /* Center the icon inside */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
+
+#music-toggle:hover {
+    box-shadow: 6px 6px 12px var(--dark-shadow),
+                -6px -6px 12px var(--light-shadow);
+}
+
+#music-toggle:active, #music-toggle.playing {
+    /* "Pressed" effect when active/playing */
+    box-shadow: inset 3px 3px 6px var(--dark-shadow),
+                inset -3px -3px 6px var(--light-shadow);
+}
+
+#music-toggle svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-color);
+    opacity: 0.8;
+}
+
+#music-toggle:hover svg {
+    opacity: 1;
+}
